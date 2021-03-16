@@ -169,10 +169,31 @@ class Canneal(Parsec):
         self.cmdline = [ binary_path, str(self.threads) ] + self.args[self.dataset][0] + [ self.tmpdir+"/"+self.inputs[self.dataset] ] + self.args[self.dataset][1]
 
 
-# class Facesim(Parsec):
+class Facesim(Parsec):
 
-#     inputs = {
-#     }
+    def __init__(self, args, config):
+        super().__init__(args, config)
+        self.bench_dir = "/pkgs/apps/"
+
+    def prepare(self):
+        super().prepare()
+
+        # Build cmdline
+        binary_path = self.parsec_dir+"/pkgs/apps/facesim/inst/"+archs[self.arch]+"/bin/facesim"
+        self.cmdline = [ binary_path ]
+        if self.dataset == "test":
+            self.cmdline += [ '-h-' ]
+        elif self.dataset == "native":
+            self.cmdline += [ '-timing', '-threads', str(self.threads), '-lastframe', '100' ]
+        else:
+            self.cmdline += [ '-timing', '-threads', str(self.threads) ]
+
+        self.olddir = os.getcwd()
+        os.chdir(self.tmpdir)
+
+    def cleanup(self):
+        super().cleanup()
+        os.chdir(self.olddir)
 
 
 class Ferret(Parsec):
@@ -208,6 +229,7 @@ class ParsecFactory():
         "parsec.blackscholes": Blackscholes,
         "parsec.bodytrack": Bodytrack,
         "parsec.canneal": Canneal,
+        "parsec.facesim": Facesim,
         "parsec.ferret": Ferret
     }
 
