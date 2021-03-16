@@ -39,13 +39,14 @@ class Parsec(Benchmark):
         self.arch = args.arch
 
 
-    def prepare(self):
+    def prepare(self, no_input=False):
         self.tmpdir = tempfile.mkdtemp(prefix=f"parsec.{self.app}.")
 
         # Extract input from tar in temp dir
-        tar = tarfile.open(self.parsec_dir+f"{self.bench_dir}/{self.app}/inputs/input_"+self.dataset+".tar")
-        tar.extractall(path=self.tmpdir)
-        tar.close()
+        if no_input is False:
+            tar = tarfile.open(self.parsec_dir+f"{self.bench_dir}/{self.app}/inputs/input_"+self.dataset+".tar")
+            tar.extractall(path=self.tmpdir)
+            tar.close()
 
 
     def format_output(self, stdout, stderr):
@@ -254,7 +255,31 @@ class Fluidanimate(Parsec):
         binary_path = self.parsec_dir+"/pkgs/apps/fluidanimate/inst/"+archs[self.arch]+"/bin/fluidanimate"
         self.cmdline = [ binary_path, str(self.threads), self.args[self.dataset],
                          self.tmpdir+'/'+self.inputs[self.dataset], self.tmpdir+'/out.fluid' ]
-    
+
+
+class Streamcluster(Parsec):
+
+    args = {
+        'test': [ '2', '5', '1', '10', '10', '5', 'none' ],
+        'simdev': [ '3', '10', '3', '16', '16', '10', 'none' ],
+        'simsmall': [ '10', '20', '32', '4096', '4096', '1000', 'none' ],
+        'simmedium': [ '10', '20', '64', '8192', '8192', '1000', 'none' ],
+        'simlarge': [ '10', '20', '128', '16384', '16384', '1000', 'none' ],
+        'native': [ '10', '20', '128', '1000000', '200000', '5000', 'none' ]
+    }
+
+    def __init__(self, args, config):
+        super().__init__(args, config)
+        self.bench_dir = "/pkgs/kernels/"
+
+    def prepare(self):
+        super().prepare(no_input=True)
+
+        # Build cmdline
+        binary_path = self.parsec_dir+"/pkgs/kernels/streamcluster/inst/"+archs[self.arch]+"/bin/streamcluster"
+        self.cmdline = [ binary_path ] + self.args[self.dataset] + [ self.tmpdir+'/output.txt',
+                                                                     str(self.threads) ]
+
 class ParsecFactory():
 
     apps = {
@@ -263,7 +288,8 @@ class ParsecFactory():
         "parsec.canneal": Canneal,
         "parsec.facesim": Facesim,
         "parsec.ferret": Ferret,
-        "parsec.fluidanimate": Fluidanimate
+        "parsec.fluidanimate": Fluidanimate,
+        "parsec.streamcluster": Streamcluster
     }
 
     def create(args, config):
