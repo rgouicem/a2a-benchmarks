@@ -280,6 +280,32 @@ class Streamcluster(Parsec):
         self.cmdline = [ binary_path ] + self.args[self.dataset] + [ self.tmpdir+'/output.txt',
                                                                      str(self.threads) ]
 
+
+class Vips(Parsec):
+
+    inputs = {
+        'test': 'barbados_256x288.v',
+        'simdev': 'barbados_256x288.v',
+        'simsmall': 'pomegranate_1600x1200.v',
+        'simmedium': 'vulture_2336x2336.v',
+        'simlarge':'bigben_2662x5500.v' ,
+        'native': 'orion_18000x18000.v'
+    }
+
+    def __init__(self, args, config):
+        super().__init__(args, config)
+        self.bench_dir = "/pkgs/apps/"
+
+    def prepare(self):
+        super().prepare()
+        
+        # Build cmdline
+        binary_path = self.parsec_dir+"/pkgs/apps/vips/inst/"+archs[self.arch]+"/bin/vips"
+        self.cmdline = [ binary_path, 'im_benchmark',
+                         self.tmpdir+'/'+self.inputs[self.dataset],
+                         self.tmpdir+'/output.v' ]
+
+    
 class ParsecFactory():
 
     apps = {
@@ -289,7 +315,8 @@ class ParsecFactory():
         "parsec.facesim": Facesim,
         "parsec.ferret": Ferret,
         "parsec.fluidanimate": Fluidanimate,
-        "parsec.streamcluster": Streamcluster
+        "parsec.streamcluster": Streamcluster,
+        "parsec.vips": Vips
     }
 
     def create(args, config):
