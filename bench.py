@@ -26,6 +26,8 @@ parser.add_argument('-n', '--num-threads', type=int, required=True,
                     help='Number of threads')
 parser.add_argument('-i', '--num-runs', type=int, default=1,
                     help='Number of runs to perform')
+parser.add_argument('-t', '--tag', type=str, default='none',
+                    help='Tag used for results (default: none)')
 parser.add_argument('-c', '--config-file', default='./config',
                     help='Path to a config file (default: ./config)')
 parser.add_argument('-v', '--verbose', action='count', default=0,
@@ -85,6 +87,8 @@ logging.info(f"Executing command {args.num_runs} times... done")
 # Format the output
 logging.info("Formatting output...")
 result = bench.format_output(stdout, stderr)
+result['runtime'] = args.runtime
+result['tag'] = args.tag
 try:
     df = pd.read_pickle(args.output)
     df = df.append(result, ignore_index=False)
