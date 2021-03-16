@@ -288,7 +288,7 @@ class Vips(Parsec):
         'simdev': 'barbados_256x288.v',
         'simsmall': 'pomegranate_1600x1200.v',
         'simmedium': 'vulture_2336x2336.v',
-        'simlarge':'bigben_2662x5500.v' ,
+        'simlarge': 'bigben_2662x5500.v',
         'native': 'orion_18000x18000.v'
     }
 
