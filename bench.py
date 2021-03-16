@@ -64,7 +64,7 @@ logging.info("Runtime is ready: "+str(runtime))
 
 # Build the complete command line
 # env = os.environ | runtime.env | bench.env
-env = runtime.env | bench.env
+env = {**runtime.env, **bench.env}
 logging.info(f"Environment: {env}")
 cmdline = runtime.cmdline + bench.cmdline
 logging.info(f"Command line: {cmdline}")
