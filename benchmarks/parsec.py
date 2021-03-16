@@ -223,6 +223,38 @@ class Ferret(Parsec):
                                                                                    self.tmpdir+'/output.txt' ]
 
 
+class Fluidanimate(Parsec):
+
+    inputs = {
+        'test': 'in_5K.fluid',
+        'simdev': 'in_15K.fluid',
+        'simsmall': 'in_35K.fluid',
+        'simmedium': 'in_100K.fluid',
+        'simlarge': 'in_300K.fluid',
+        'native':  'in_500K.fluid' 
+    }
+
+    args = {
+        'test': '1',
+        'simdev': '3',
+        'simsmall': '5',
+        'simmedium': '5',
+        'simlarge': '5',
+        'native': '500'
+    }
+
+    def __init__(self, args, config):
+        super().__init__(args, config)
+        self.bench_dir = "/pkgs/apps/"
+
+    def prepare(self):
+        super().prepare()
+        
+        # Build cmdline
+        binary_path = self.parsec_dir+"/pkgs/apps/fluidanimate/inst/"+archs[self.arch]+"/bin/fluidanimate"
+        self.cmdline = [ binary_path, str(self.threads), self.args[self.dataset],
+                         self.tmpdir+'/'+self.inputs[self.dataset], self.tmpdir+'/out.fluid' ]
+    
 class ParsecFactory():
 
     apps = {
@@ -230,7 +262,8 @@ class ParsecFactory():
         "parsec.bodytrack": Bodytrack,
         "parsec.canneal": Canneal,
         "parsec.facesim": Facesim,
-        "parsec.ferret": Ferret
+        "parsec.ferret": Ferret,
+        "parsec.fluidanimate": Fluidanimate
     }
 
     def create(args, config):
