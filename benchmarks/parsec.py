@@ -54,7 +54,7 @@ class Parsec(Benchmark):
         with open(stdout.name, "r") as fp:
             for l in fp:
                 if "bench.py" in l:
-                    duration = l.split(' ')[2]
+                    duration = float(l.split(' ')[2])
                     df = df.append({ 'bench': self.app,
                                      'dataset': self.dataset,
                                      'arch': self.arch,
