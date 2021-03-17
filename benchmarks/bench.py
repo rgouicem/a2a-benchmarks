@@ -14,7 +14,7 @@ class Benchmark():
     def prepare(self):
         pass
 
-    def get_results(self):
+    def format_results(self, stdout, stderr):
         pass
 
     def cleanup(self):
