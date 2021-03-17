@@ -33,6 +33,7 @@ parser.add_argument('-c', '--config-file', default='./config',
 parser.add_argument('-v', '--verbose', action='count', default=0,
                     help='Set the verbosity level')
 args = parser.parse_args()
+args.output = os.path.abspath(args.output)
 
 # Setup logging
 try:
