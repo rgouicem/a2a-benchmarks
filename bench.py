@@ -93,6 +93,7 @@ result['tag'] = args.tag
 try:
     df = pd.read_pickle(args.output)
     df = df.append(result, ignore_index=False)
+    df = df.reset_index(drop=True)
     df.to_pickle(args.output)
 except FileNotFoundError:
     result.to_pickle(args.output)
