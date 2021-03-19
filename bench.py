@@ -84,18 +84,27 @@ for i in range(1, args.num_runs + 1):
     logging.info(f"Run {i}... done")
 logging.info(f"Executing command {args.num_runs} times... done")
 
-# Format the output
+# Format the output and save to disk
 logging.info("Formatting output...")
 result = bench.format_output(stdout, stderr)
 result['runtime'] = args.runtime
 result['tag'] = args.tag
 try:
-    df = pd.read_pickle(args.output)
+    if args.output.endswith(".csv"):
+        df = pd.read_csv(args.output, sep=';')
+    else:
+        df = pd.read_pickle(args.output)
     df = df.append(result, ignore_index=False)
     df = df.reset_index(drop=True)
-    df.to_pickle(args.output)
+    if args.output.endswith(".csv"):
+        df.to_csv(args.output, sep=';')
+    else:
+        df.to_pickle(args.output, protocol=4)
 except FileNotFoundError:
-    result.to_pickle(args.output)
+    if args.output.endswith(".csv"):
+        result.to_csv(args.output, sep=';')
+    else:
+        result.to_pickle(args.output, protocol=4)
 logging.info(f"Results available at: {args.output}")
 
 print('\nStandard output:')
