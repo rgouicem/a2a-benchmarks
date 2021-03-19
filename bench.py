@@ -97,12 +97,12 @@ try:
     df = df.append(result, ignore_index=False)
     df = df.reset_index(drop=True)
     if args.output.endswith(".csv"):
-        df.to_csv(args.output, sep=';')
+        df.to_csv(args.output, sep=';', index=False)
     else:
         df.to_pickle(args.output, protocol=4)
 except FileNotFoundError:
     if args.output.endswith(".csv"):
-        result.to_csv(args.output, sep=';')
+        result.to_csv(args.output, sep=';', index=False)
     else:
         result.to_pickle(args.output, protocol=4)
 logging.info(f"Results available at: {args.output}")
