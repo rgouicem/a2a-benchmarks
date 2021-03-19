@@ -19,7 +19,7 @@ parser.add_argument('-d', '--dataset', required=True,
 parser.add_argument('-r', '--runtime', required=True, choices=['native','qemu','llvm'],
                     help='Type of runtime')
 parser.add_argument('-o', '--output', required=True,
-                    help='Pickle file where results should be outputed. If file already exists, results will be appended.')
+                    help='Pickle/csv file where results should be outputed. If file already exists, results will be appended.')
 parser.add_argument('-a', '--arch', default='x86_64', choices=['x86_64', 'aarch64'],
                     help='ISA to use when selecting the binary')
 parser.add_argument('-n', '--num-threads', type=int, required=True,
