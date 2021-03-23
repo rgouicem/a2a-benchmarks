@@ -72,6 +72,11 @@ for row in df.itertuples():
 df_norm = df_norm.append(norm_vals, ignore_index=True)
 
 # Plot
-sbs.barplot(data=df_norm, x='bench', y='norm', hue='label', log=True)
+ax = sbs.barplot(data=df_norm, x='bench', y='norm', hue='label',
+                 order=sorted(set(df_norm['bench'])))
+plt.grid(b=True, axis='y')
+plt.yticks(ticks=np.arange(0, max(df_norm['norm'].values) + 0.1, step=0.1))
+plt.legend(bbox_to_anchor=(1.01, 1),borderaxespad=0)
+ax.set_axisbelow(True)
 plt.savefig(args.output, dpi=500, bbox_inches='tight')
 plt.show()
