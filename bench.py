@@ -91,13 +91,13 @@ result['runtime'] = args.runtime
 result['tag'] = args.tag
 try:
     if args.output.endswith(".csv"):
-        df = pd.read_csv(args.output, sep=';')
+        df = pd.read_csv(args.output, sep=';', index_col=0)
     else:
         df = pd.read_pickle(args.output)
     df = df.append(result, ignore_index=False)
     df = df.reset_index(drop=True)
     if args.output.endswith(".csv"):
-        df.to_csv(args.output, sep=';', index=False)
+        df.to_csv(args.output, sep=';')
     else:
         df.to_pickle(args.output, protocol=4)
 except FileNotFoundError:
