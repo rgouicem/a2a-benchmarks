@@ -17,7 +17,7 @@ class Phoenix(Benchmark):
 
     def __init__(self, args, config):
         super().__init__(args, config)
-        self.app = args.bench.split('.')[1]
+        self.app = args.bench
         self.phoenix_dir = config.store["PHOENIX_DIR"]
 
          # Get binary ISA
