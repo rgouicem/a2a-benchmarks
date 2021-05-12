@@ -3,7 +3,7 @@
 import logging, os
 import pandas as pd
 
-from benchmarks.bench import Benchmark
+from applications.bench import Benchmark
 
 archs = {
     "x86_64": "amd64-linux.gcc"

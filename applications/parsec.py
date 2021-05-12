@@ -3,7 +3,7 @@
 import logging, tempfile, tarfile, os, shutil, tarfile
 import pandas as pd
 
-from benchmarks.bench import Benchmark
+from applications.bench import Benchmark
 
 datasets = [ 'test', 'simdev', 'simsmall', 'simmedium', 'simlarge', 'native' ]
 archs = {

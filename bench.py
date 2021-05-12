@@ -4,7 +4,7 @@ import argparse, logging, subprocess, os, time, tempfile
 import pandas as pd
 
 from config import Config
-from benchmarks.factory import BenchmarkFactory
+from applications.factory import BenchmarkFactory
 from runtimes.factory import RuntimeFactory
 
 

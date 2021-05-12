@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 
-from benchmarks.parsec import ParsecFactory
-from benchmarks.phoenix import PhoenixFactory
+from applications.parsec import ParsecFactory
+from applications.phoenix import PhoenixFactory
+from applications.db import DbFactory
 
 class BenchmarkFactory():
 
@@ -10,4 +11,6 @@ class BenchmarkFactory():
             return ParsecFactory.create(args, config)
         if args.bench.startswith('phoenix.'):
             return PhoenixFactory.create(args, config)
+        if args.bench.startswith('db.'):
+            return DbFactory.create(args, config)
         return None
