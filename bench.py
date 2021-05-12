@@ -53,6 +53,9 @@ logging.info("Configuration: "+str(config))
 # Get the benchmark object
 logging.info("Creating benchmark...")
 bench = BenchmarkFactory.create(args, config)
+if bench is None:
+    logging.error("Unsupported benchmark")
+    exit(1)
 logging.info("Benchmark created: "+str(bench))
 
 # Prepare the benchmark
