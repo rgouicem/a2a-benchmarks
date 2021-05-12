@@ -110,12 +110,12 @@ except FileNotFoundError:
         result.to_pickle(args.output, protocol=4)
 logging.info(f"Results available at: {args.output}")
 
-print('\nStandard output:')
+logging.info('Standard output:')
 with open(stdout.name, "r") as fp:
-    print(fp.read())
-print('\nStandard error:')
+    logging.info(fp.read())
+logging.info('Standard error:')
 with open(stderr.name, "r") as fp:
-    print(fp.read())
+    logging.info(fp.read())
 
 # Cleanup
 logging.info("Cleaning up benchmark data...")
