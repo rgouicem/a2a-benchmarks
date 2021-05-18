@@ -28,7 +28,7 @@ class SQLite(Benchmark):
     def prepare(self):
         super().prepare()
 
-        self.cmdline = [ self.sqlite_dir + '/speedtest1', '--threads', str(self.threads) ]
+        self.cmdline = [ self.sqlite_dir + '/speedtest1', '--multithread', '--threads', str(self.threads) ]
 
     def format_output(self, stdout, stderr):
         df = pd.DataFrame()
