@@ -27,14 +27,14 @@ class Parsec(Benchmark):
 
         # Check dataset
         if args.dataset not in datasets:
-            logging.error("Dataset not supported by PARSEC. Should be among "+datasets)
+            logging.error("Dataset not supported by PARSEC. Should be among "+str(datasets))
             exit(1)
         else:
             self.dataset = args.dataset
 
         # Get binary ISA
         if args.arch not in archs:
-            logging.error("Architecture not supported by PARSEC. Should be among "+archs)
+            logging.error("Architecture not supported by PARSEC. Should be among "+str(archs))
             exit(1)
         self.arch = args.arch
 
