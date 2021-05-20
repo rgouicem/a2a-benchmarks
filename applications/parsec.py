@@ -22,7 +22,7 @@ class Parsec(Benchmark):
 
     def __init__(self, args, config):
         super().__init__(args, config)
-        self.app = args.bench
+        self.app = args.bench[7:]
         self.parsec_dir = config.store["PARSEC_DIR"]
 
         # Check dataset
