@@ -329,6 +329,31 @@ class Freqmine(Parsec):
         self.cmdline = [ binary_path, self.tmpdir+'/'+self.inputs[self.dataset][0], self.inputs[self.dataset][1] ]
 
 
+class Swaptions(Parsec):
+
+    inputs = {
+        'test': [ '128', '1000000' ],
+        'simdev': [ '3', '50' ],
+        'simsmall': [ '16', '10000' ],
+        'simmedium': [ '32', '20000' ],
+        'simlarge': [ '64', '40000' ],
+        'native': [ '128', '1000000' ]
+    }
+
+    def __init__(self, args, config):
+        super().__init__(args, config)
+        self.bench_dir = "/pkgs/apps/"
+
+    def prepare(self):
+        super().prepare(no_input=True)
+
+        # Build cmdline
+        binary_path = self.parsec_dir+self.bench_dir+"swaptions/inst/"+archs[self.arch]+"/bin/swaptions"
+        self.cmdline = [ binary_path,
+                         "-ns", self.inputs[self.dataset][0],
+                         '-sm', self.inputs[self.dataset][1],
+                         '-nt', str(min(self.threads, int(self.inputs[self.dataset][0]))) ]
+
 class ParsecFactory():
 
     apps = {
@@ -344,7 +369,7 @@ class ParsecFactory():
         # "parsec.netferret": Netferret,
         # "parsec.netstreamcluster": Netstreamcluster,
         "parsec.streamcluster": Streamcluster,
-        # "parsec.swaptions": Swaptions,
+        "parsec.swaptions": Swaptions,
         "parsec.vips": Vips,
         # "parsec.x264": X264
     }
