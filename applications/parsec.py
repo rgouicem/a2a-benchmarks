@@ -305,18 +305,48 @@ class Vips(Parsec):
                          self.tmpdir+'/'+self.inputs[self.dataset],
                          self.tmpdir+'/output.v' ]
 
-    
+
+class Freqmine(Parsec):
+
+    inputs = {
+        'test': [ "T10I4D100K_3.dat",  "1" ],
+        'simdev': [ "T10I4D100K_1k.dat", "3" ],
+        'simsmall': [ "kosarak_250k.dat", "220" ],
+        'simmedium': [ "kosarak_500k.dat", "410" ],
+        'simlarge': [ "kosarak_990k.dat", "790" ],
+        'native': [ "webdocs_250k.dat", "11000" ]
+    }
+
+    def __init__(self, args, config):
+        super().__init__(args, config)
+        self.bench_dir = "/pkgs/apps/"
+
+    def prepare(self):
+        super().prepare()
+
+        # Build cmdline
+        binary_path = self.parsec_dir+self.bench_dir+"/freqmine/inst/"+archs[self.arch]+"/bin/freqmine"
+        self.cmdline = [ binary_path, self.tmpdir+'/'+self.inputs[self.dataset][0], self.inputs[self.dataset][1] ]
+
+
 class ParsecFactory():
 
     apps = {
         "parsec.blackscholes": Blackscholes,
         "parsec.bodytrack": Bodytrack,
         "parsec.canneal": Canneal,
+        # "parsec.dedup": Dedup,
         "parsec.facesim": Facesim,
         "parsec.ferret": Ferret,
         "parsec.fluidanimate": Fluidanimate,
+        "parsec.freqmine": Freqmine,
+        # "parsec.netdedup": Netdedup,
+        # "parsec.netferret": Netferret,
+        # "parsec.netstreamcluster": Netstreamcluster,
         "parsec.streamcluster": Streamcluster,
-        "parsec.vips": Vips
+        # "parsec.swaptions": Swaptions,
+        "parsec.vips": Vips,
+        # "parsec.x264": X264
     }
 
     def create(args, config):
