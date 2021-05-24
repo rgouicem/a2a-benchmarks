@@ -22,7 +22,7 @@ class Parsec(Benchmark):
 
     def __init__(self, args, config):
         super().__init__(args, config)
-        self.app = args.bench
+        self.app = args.bench[7:]
         self.parsec_dir = config.store["PARSEC_DIR"]
 
         # Check dataset
@@ -55,7 +55,7 @@ class Parsec(Benchmark):
             for l in fp:
                 if "bench.py" in l:
                     duration = float(l.split(' ')[2])
-                    df = df.append({ 'bench': self.app,
+                    df = df.append({ 'bench': f"parsec.{self.app}",
                                      'dataset': self.dataset,
                                      'arch': self.arch,
                                      'threads': int(self.threads),
