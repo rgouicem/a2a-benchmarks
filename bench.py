@@ -81,10 +81,10 @@ stderr = tempfile.NamedTemporaryFile(mode="w")
 for i in range(1, args.num_runs + 1):
     logging.info(f"Run {i}...")
     start = time.time()
-    subprocess.run(cmdline, env=env, stdout=stdout, stderr=stderr)
+    retproc = subprocess.run(cmdline, env=env, stdout=stdout, stderr=stderr)
     end = time.time()
-    print(f"bench.py: duration: {end - start} seconds, run: {i}", file=stdout, flush=True)
-    logging.info(f"Run {i}... done")
+    print(f"bench.py: duration: {end - start} seconds, run: {i}, retval: {retproc.returncode}", file=stdout, flush=True)
+    logging.info(f"Run {i}... done (retval={retproc.returncode})")
 logging.info(f"Executing command {args.num_runs} times... done")
 
 # Format the output and save to disk
