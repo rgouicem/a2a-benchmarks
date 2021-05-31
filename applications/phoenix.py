@@ -22,7 +22,7 @@ class Phoenix(Benchmark):
 
          # Get binary ISA
         if args.arch not in archs:
-            logging.error("Architecture not supported by Phoenix. Should be among "+archs)
+            logging.error(f"Architecture not supported by Phoenix. Should be among {archs}")
             exit(1)
         self.arch = args.arch
 
