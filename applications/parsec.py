@@ -172,6 +172,29 @@ class Canneal(Parsec):
         self.cmdline = [ binary_path, str(self.threads) ] + self.args[self.dataset][0] + [ self.tmpdir+"/"+self.inputs[self.dataset] ] + self.args[self.dataset][1]
 
 
+class Dedup(Parsec):
+
+    inputs = {
+        'test': 'test.dat',
+        'simdev': 'hamlet.dat',
+        'simsmall': 'media.dat',
+        'simmedium': 'media.dat',
+        'simlarge':  'media.dat',
+        'native':   'FC-6-x86_64-disc1.iso'
+    }
+
+    def __init__(self, args, config):
+        super().__init__(args, config)
+        self.bench_dir = "/pkgs/kernels/"
+
+    def prepare(self):
+        super().prepare()
+
+        # Build cmdline
+        binary_path = self.parsec_dir+"/pkgs/kernels/dedup/inst/"+archs[self.arch]+"/bin/dedup"
+        self.cmdline = [ binary_path, '-c', '-p', '-v', '-t', str(self.threads), '-i', self.inputs[self.dataset], '-o', 'output.dat.ddp' ]
+
+
 class Facesim(Parsec):
 
     def __init__(self, args, config):
@@ -367,6 +390,7 @@ class ParsecFactory():
         "parsec.ferret": Ferret,
         "parsec.fluidanimate": Fluidanimate,
         "parsec.freqmine": Freqmine,
+        # "parsec.raytrace": Raytrace,
         "parsec.streamcluster": Streamcluster,
         "parsec.swaptions": Swaptions,
         "parsec.vips": Vips,
