@@ -44,7 +44,9 @@ class Parsec(Benchmark):
 
         # Extract input from tar in temp dir
         if no_input is False:
-            tar = tarfile.open(self.parsec_dir+f"{self.bench_dir}/{self.app}/inputs/input_"+self.dataset+".tar")
+            tarpath = f"{self.parsec_dir}/{self.bench_dir}/{self.app}/inputs/input_{self.dataset}.tar"
+            logging.debug(f"Extracting input {tarpath}")
+            tar = tarfile.open(tarpath)
             tar.extractall(path=self.tmpdir)
             tar.close()
 
