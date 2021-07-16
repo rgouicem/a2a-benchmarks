@@ -193,8 +193,10 @@ class Dedup(Parsec):
         super().prepare()
 
         # Build cmdline
-        binary_path = self.parsec_dir+"/pkgs/kernels/dedup/inst/"+archs[self.arch]+"/bin/dedup"
-        self.cmdline = [ binary_path, '-c', '-p', '-v', '-t', str(self.threads), '-i', self.inputs[self.dataset], '-o', 'output.dat.ddp' ]
+        binary_path = f"{self.parsec_dir}/pkgs/kernels/dedup/inst/{archs[self.arch]}/bin/dedup"
+        self.cmdline = [ binary_path, '-c', '-p', '-v', '-t', str(self.threads),
+                         '-i', f"{self.tmpdir}/{self.inputs[self.dataset]}",
+                         '-o', f"{self.tmpdir}/output.dat.ddp" ]
 
 
 class Facesim(Parsec):
