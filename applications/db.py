@@ -37,8 +37,6 @@ class SQLite(Benchmark):
                 if "bench.py" in l:
                     duration = float(l.split(' ')[2])
                     retval = int(l.split(' ')[7])
-                    # duration = float(l.split()[1][:-1])
-                    # retval = int(l.split(' ')[7])
                     df = df.append({ 'bench': self.app,
                                      'dataset': 'none',
                                      'arch': self.arch,
