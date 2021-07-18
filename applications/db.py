@@ -34,8 +34,10 @@ class SQLite(Benchmark):
         df = pd.DataFrame()
         with open(stdout.name, "r") as fp:
             for l in fp:
-                if "TOTAL..." in l:
-                    duration = float(l.split()[1][:-1])
+                if "bench.py" in l:
+                    duration = float(l.split(' ')[2])
+                    retval = int(l.split(' ')[7])
+                    # duration = float(l.split()[1][:-1])
                     # retval = int(l.split(' ')[7])
                     df = df.append({ 'bench': self.app,
                                      'dataset': 'none',
@@ -43,7 +45,7 @@ class SQLite(Benchmark):
                                      'threads': int(self.threads),
                                      'cmdline': ' '.join(self.cmdline),
                                      'unit': 'seconds',
-                                     # 'retval': retval,
+                                     'retval': retval,
                                      'value': duration }, ignore_index=True)
         return df
 
