@@ -6,7 +6,8 @@ import pandas as pd
 from applications.bench import Benchmark
 
 archs = {
-    "x86_64": "amd64-linux.gcc"
+    "x86_64": "amd64-linux.gcc",
+    "aarch64": "aarch64-linux.gcc"
 }
 
 class Phoenix(Benchmark):
