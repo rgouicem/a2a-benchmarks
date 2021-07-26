@@ -11,10 +11,12 @@ class Qemu(Runtime):
         super().__init__(args, config)
 
         # Get config
-        try:
-            self.env["QEMU_LD_PREFIX"] = config.store["QEMU_LD_PREFIX"]
-        except:
-            pass
+        for cfg in [ "QEMU_LD_PREFIX", "QEMU_OPTS" ]:
+            try:
+                self.env[cfg] = config.store[cfg]
+            except:
+                pass
+
         self.path = config.store["QEMU_PATH"]
 
         # Get arch
