@@ -212,7 +212,7 @@ class Facesim(Parsec):
         binary_path = self.parsec_dir+"/pkgs/apps/facesim/inst/"+archs[self.arch]+"/bin/facesim"
         self.cmdline = [ binary_path ]
         if self.dataset == "test":
-            self.cmdline += [ '-h-' ]
+            self.cmdline += [ '-h' ]
         elif self.dataset == "native":
             self.cmdline += [ '-timing', '-threads', str(self.threads), '-lastframe', '100' ]
         else:
