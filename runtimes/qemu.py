@@ -11,7 +11,7 @@ class Qemu(Runtime):
         super().__init__(args, config)
 
         # Get config
-        for cfg in [ "QEMU_LD_PREFIX", "QEMU_STLD_DIR" ]:
+        for cfg in [ "QEMU_LD_PREFIX", "QEMU_STLD_DIR", "BB_LIST" ]:
             try:
                 self.env[cfg] = config.store[cfg]
             except:
