@@ -201,9 +201,24 @@ class Dedup(Parsec):
 
 class Facesim(Parsec):
 
+    allowed_threads = [ 1, 2, 3, 4, 6, 8, 16, 32, 64, 128 ]
+
     def __init__(self, args, config):
         super().__init__(args, config)
         self.bench_dir = "/pkgs/apps/"
+
+        # Fix thread number
+        old_threads = self.threads
+        if self.threads > 128:
+            self.threads = 128
+        elif self.threads not in allowed_threads:
+            for i in reversed(allowed_threads):
+                if i > self.threads:
+                    self.threads = i
+                else:
+                    break
+        if old_threads != self.threads:
+            logging.info(f"Changed number of threads from {old_threads} to {self.threads}")
 
     def prepare(self):
         super().prepare()
