@@ -292,6 +292,14 @@ class Fluidanimate(Parsec):
         super().__init__(args, config)
         self.bench_dir = "/pkgs/apps/"
 
+        # fix number of threads (must be a power of 2)
+        if (self.threads & (self.threads - 1)) != 0:
+            x = 1
+            while x < self.threads:
+                x = x * 2
+            logging.info(f"Changed number of threads from {self.threads} to {x}")
+            self.threads = x
+
     def prepare(self):
         super().prepare()
         
