@@ -211,8 +211,8 @@ class Facesim(Parsec):
         old_threads = self.threads
         if self.threads > 128:
             self.threads = 128
-        elif self.threads not in allowed_threads:
-            for i in reversed(allowed_threads):
+        elif self.threads not in self.allowed_threads:
+            for i in reversed(self.allowed_threads):
                 if i > self.threads:
                     self.threads = i
                 else:
