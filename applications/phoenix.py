@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 
-import logging, os
+import logging, os, shutil, tempfile
 import pandas as pd
 
 from applications.bench import Benchmark
@@ -9,6 +9,7 @@ archs = {
     "x86_64": "amd64-linux.gcc",
     "aarch64": "aarch64-linux.gcc"
 }
+
 
 class Phoenix(Benchmark):
 
@@ -31,8 +32,12 @@ class Phoenix(Benchmark):
         self.threads = os.cpu_count()
 
 
-    def prepare(self, no_input=False):
-        pass
+    def prepare(self, no_input=False, input_path=None):
+        self.tmpdir = tempfile.mkdtemp(prefix=f"parsec.{self.app}.")
+
+        if no_input is False:
+            shutil.copy(input_path, f"{self.tmpdir}/")
+
 
     def format_output(self, stdout, stderr):
         df = pd.DataFrame()
@@ -42,7 +47,7 @@ class Phoenix(Benchmark):
                     duration = float(l.split(' ')[2])
                     retval = int(l.split(' ')[7])
                     df = df.append({ 'bench': self.app,
-                                     'dataset': 'none',
+                                     'dataset': self.dataset,
                                      'arch': self.arch,
                                      'threads': int(self.threads),
                                      'cmdline': ' '.join(self.cmdline),
@@ -52,13 +57,13 @@ class Phoenix(Benchmark):
         return df
 
     def cleanup(self):
-        pass
+        shutil.rmtree(self.tmpdir)
 
     def __str__(self):
         ret = "<"
         ret += "name="+self.name
         ret += ", threads="+str(self.threads)
-        ret += ", dataset=none"
+        ret += ", dataset="+self.dataset
         ret += ", arch="+self.arch
         ret += ", cmdline: " + str(self.cmdline)
         ret += ">"
@@ -67,26 +72,40 @@ class Phoenix(Benchmark):
 
 class Histogram(Phoenix):
 
+    inputs = {
+        'small': 'small.bmp',
+        'med':     'med.bmp',
+        'large': 'large.bmp'
+    }
+
     def __init__(self, args, config):
         super().__init__(args, config)
 
+        # Check dataset
+        if args.dataset not in self.inputs:
+            logging.error(f"Dataset not supported by {self.bench}. Should be among {self.inputs.keys()}")
+            exit(1)
+        else:
+            self.dataset = args.dataset
+
 
     def prepare(self):
-        super().prepare()
+        super().prepare(input_path=f"{self.phoenix_dir}/phoenix-2.0/tests/histogram/histogram_datafiles/{self.inputs[self.dataset]}")
 
         # Build cmdline
-        self.cmdline = [ self.phoenix_dir + '/phoenix-2.0/tests/histogram/histogram',
-                         self.phoenix_dir + '/phoenix-2.0/tests/histogram/histogram_datafiles/large.bmp' ]
+        self.cmdline = [ f"{self.phoenix_dir}/phoenix-2.0/tests/histogram/histogram",
+                         f"{self.tmpdir}/{self.inputs[self.dataset]}" ]
 
 
 class Kmeans(Phoenix):
 
     def __init__(self, args, config):
         super().__init__(args, config)
+        self.dataset = "large"
 
 
     def prepare(self):
-        super().prepare()
+        super().prepare(no_input=True)
 
         # Build cmdline
         self.cmdline = [ self.phoenix_dir + '/phoenix-2.0/tests/kmeans/kmeans' ]
@@ -94,26 +113,38 @@ class Kmeans(Phoenix):
 
 class LinearRegression(Phoenix):
 
+    inputs = {
+        'small': 'key_file_50MB.txt',
+        'med':   'key_file_100MB.txt',
+        'large': 'key_file_500MB.txt'
+    }
+
     def __init__(self, args, config):
         super().__init__(args, config)
 
+        # Check dataset
+        if args.dataset not in self.inputs:
+            logging.error(f"Dataset not supported by {self.bench}. Should be among {self.inputs.keys()}")
+            exit(1)
+        else:
+            self.dataset = args.dataset
 
     def prepare(self):
-        super().prepare()
+        super().prepare(input_path=f"{self.phoenix_dir}/phoenix-2.0/tests/linear_regression/linear_regression_datafiles/{self.inputs[self.dataset]}")
 
         # Build cmdline
-        self.cmdline = [ self.phoenix_dir + '/phoenix-2.0/tests/linear_regression/linear_regression',
-                         self.phoenix_dir + '/phoenix-2.0/tests/linear_regression/linear_regression_datafiles/key_file_500MB.txt' ]
+        self.cmdline = [ f"{self.phoenix_dir}/phoenix-2.0/tests/linear_regression/linear_regression",
+                         f"{self.tmpdir}/{self.inputs[self.dataset]}" ]
 
 
 class MatrixMultiply(Phoenix):
 
     def __init__(self, args, config):
         super().__init__(args, config)
-
+        self.dataset = "large"
 
     def prepare(self):
-        super().prepare()
+        super().prepare(no_input=True)
 
         # Build cmdline
         self.cmdline = [ self.phoenix_dir + '/phoenix-2.0/tests/matrix_multiply/matrix_multiply',
@@ -124,10 +155,10 @@ class Pca(Phoenix):
 
     def __init__(self, args, config):
         super().__init__(args, config)
-
+        self.dataset = "large"
 
     def prepare(self):
-        super().prepare()
+        super().prepare(no_input=True)
 
         # Build cmdline
         self.cmdline = [ self.phoenix_dir + '/phoenix-2.0/tests/pca/pca',
@@ -136,30 +167,56 @@ class Pca(Phoenix):
 
 class StringMatch(Phoenix):
 
+    inputs = {
+        'small': 'key_file_50MB.txt',
+        'med':   'key_file_100MB.txt',
+        'large': 'key_file_500MB.txt'
+    }   
+
     def __init__(self, args, config):
         super().__init__(args, config)
 
+        # Check dataset
+        if args.dataset not in self.inputs:
+            logging.error(f"Dataset not supported by {self.bench}. Should be among {self.inputs.keys()}")
+            exit(1)
+        else:
+            self.dataset = args.dataset
+
 
     def prepare(self):
-        super().prepare()
+        super().prepare(input_path=f"{self.phoenix_dir}/phoenix-2.0/tests/linear_regression/linear_regression_datafiles/{self.inputs[self.dataset]}")
 
         # Build cmdline
-        self.cmdline = [ self.phoenix_dir + '/phoenix-2.0/tests/string_match/string_match',
-                         self.phoenix_dir + '/phoenix-2.0/tests/string_match/string_match_datafiles/key_file_500MB.txt' ]
+        self.cmdline = [ f"{self.phoenix_dir}/phoenix-2.0/tests/string_match/string_match",
+                         f"{self.tmpdir}/{self.inputs[self.dataset]}" ]
 
 
 class WordCount(Phoenix):
 
+    inputs = {
+        'small': 'word_10MB.txt',
+        'med':   'word_50MB.txt',
+        'large': 'word_100MB.txt'
+    }
+
     def __init__(self, args, config):
         super().__init__(args, config)
 
+        # Check dataset
+        if args.dataset not in self.inputs:
+            logging.error(f"Dataset not supported by {self.bench}. Should be among {self.inputs.keys()}")
+            exit(1)
+        else:
+            self.dataset = args.dataset
+
 
     def prepare(self):
-        super().prepare()
+        super().prepare(input_path=f"{self.phoenix_dir}/phoenix-2.0/tests/word_count/word_count_datafiles/{self.inputs[self.dataset]}")
 
         # Build cmdline
-        self.cmdline = [ self.phoenix_dir + '/phoenix-2.0/tests/word_count/word_count',
-                         self.phoenix_dir + '/phoenix-2.0/tests/word_count/word_count_datafiles/word_100MB.txt' ]
+        self.cmdline = [ f"{self.phoenix_dir}/phoenix-2.0/tests/word_count/word_count",
+                         f"{self.tmpdir}/{self.inputs[self.dataset]}" ]
 
 
 class PhoenixFactory():
