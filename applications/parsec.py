@@ -40,7 +40,7 @@ class Parsec(Benchmark):
 
 
     def prepare(self, no_input=False):
-        self.tmpdir = tempfile.mkdtemp(prefix=f"parsec.{self.app}.")
+        self.tmpdir = tempfile.mkdtemp(prefix=f"parsec.{self.app}.", dir="/tmp/")
 
         # Extract input from tar in temp dir
         if no_input is False:

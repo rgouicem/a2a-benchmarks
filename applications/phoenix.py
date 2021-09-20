@@ -33,7 +33,7 @@ class Phoenix(Benchmark):
 
 
     def prepare(self, no_input=False, input_path=None):
-        self.tmpdir = tempfile.mkdtemp(prefix=f"parsec.{self.app}.")
+        self.tmpdir = tempfile.mkdtemp(prefix=f"parsec.{self.app}.", dir="/tmp/")
 
         if no_input is False:
             shutil.copy(input_path, f"{self.tmpdir}/")
