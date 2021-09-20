@@ -83,7 +83,7 @@ class Histogram(Phoenix):
 
         # Check dataset
         if args.dataset not in self.inputs:
-            logging.error(f"Dataset not supported by {self.bench}. Should be among {self.inputs.keys()}")
+            logging.error(f"Dataset not supported by {self.app}. Should be among {self.inputs.keys()}")
             exit(1)
         else:
             self.dataset = args.dataset
@@ -124,7 +124,7 @@ class LinearRegression(Phoenix):
 
         # Check dataset
         if args.dataset not in self.inputs:
-            logging.error(f"Dataset not supported by {self.bench}. Should be among {self.inputs.keys()}")
+            logging.error(f"Dataset not supported by {self.app}. Should be among {self.inputs.keys()}")
             exit(1)
         else:
             self.dataset = args.dataset
@@ -178,7 +178,7 @@ class StringMatch(Phoenix):
 
         # Check dataset
         if args.dataset not in self.inputs:
-            logging.error(f"Dataset not supported by {self.bench}. Should be among {self.inputs.keys()}")
+            logging.error(f"Dataset not supported by {self.app}. Should be among {self.inputs.keys()}")
             exit(1)
         else:
             self.dataset = args.dataset
@@ -205,7 +205,7 @@ class WordCount(Phoenix):
 
         # Check dataset
         if args.dataset not in self.inputs:
-            logging.error(f"Dataset not supported by {self.bench}. Should be among {self.inputs.keys()}")
+            logging.error(f"Dataset not supported by {self.app}. Should be among {self.inputs.keys()}")
             exit(1)
         else:
             self.dataset = args.dataset
