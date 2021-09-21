@@ -22,7 +22,7 @@ class Parsec(Benchmark):
 
     def __init__(self, args, config):
         super().__init__(args, config)
-        self.app = args.bench[7:]
+        self.app = args.bench
         self.parsec_dir = config.store["PARSEC_DIR"]
 
         # Check dataset
@@ -40,7 +40,7 @@ class Parsec(Benchmark):
 
 
     def prepare(self, no_input=False):
-        self.tmpdir = tempfile.mkdtemp(prefix=f"parsec.{self.app}.", dir="/tmp/")
+        self.tmpdir = tempfile.mkdtemp(prefix=f"{self.app}.")
 
         # Extract input from tar in temp dir
         if no_input is False:
@@ -58,7 +58,7 @@ class Parsec(Benchmark):
                 if "bench.py" in l:
                     duration = float(l.split(' ')[2])
                     retval = int(l.split(' ')[7])
-                    df = df.append({ 'bench': f"parsec.{self.app}",
+                    df = df.append({ 'bench': f"{self.app}",
                                      'dataset': self.dataset,
                                      'arch': self.arch,
                                      'threads': int(self.threads),
