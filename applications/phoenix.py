@@ -28,8 +28,9 @@ class Phoenix(Benchmark):
             exit(1)
         self.arch = args.arch
 
-        # Fix number of threads (cannot be configured in Phoenix, defaults to number of cores)
-        self.threads = os.cpu_count()
+        # Fix number of threads (must be configured through environment variables)
+        self.env["MR_NUMTHREADS"] = self.threads
+        self.env["MR_NUMPROCS"] = self.threads
 
 
     def prepare(self, no_input=False, input_path=None):
