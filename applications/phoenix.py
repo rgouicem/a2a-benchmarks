@@ -29,8 +29,8 @@ class Phoenix(Benchmark):
         self.arch = args.arch
 
         # Fix number of threads (must be configured through environment variables)
-        self.env["MR_NUMTHREADS"] = self.threads
-        self.env["MR_NUMPROCS"] = self.threads
+        self.env["MR_NUMTHREADS"] = str(self.threads)
+        self.env["MR_NUMPROCS"] = str(self.threads)
 
 
     def prepare(self, no_input=False, input_path=None):
