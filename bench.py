@@ -92,26 +92,29 @@ for i in range(1, args.num_runs + 1):
         # Format the output and save to disk
         logging.info("Formatting output...")
         result = bench.format_output(stdout, stderr)
-        result['runtime'] = args.runtime
-        result['tag'] = args.tag
+        if result is not None:
+            result['runtime'] = args.runtime
+            result['tag'] = args.tag
 
-        try:
-            if args.output.endswith(".csv"):
-                df = pd.read_csv(args.output, sep=';')
-            else:
-                df = pd.read_pickle(args.output)
-            df = df.append(result, ignore_index=False)
-            df = df.reset_index(drop=True)
-            if args.output.endswith(".csv"):
-                df.to_csv(args.output, sep=';', index=False)
-            else:
-                df.to_pickle(args.output, protocol=4)
-        except FileNotFoundError:
-            logging.debug(args.output)
-            if args.output.endswith(".csv"):
-                result.to_csv(args.output, sep=';', index=False)
-            else:
-                result.to_pickle(args.output, protocol=4)
+            try:
+                if args.output.endswith(".csv"):
+                    df = pd.read_csv(args.output, sep=';')
+                else:
+                    df = pd.read_pickle(args.output)
+                df = df.append(result, ignore_index=False)
+                df = df.reset_index(drop=True)
+                if args.output.endswith(".csv"):
+                    df.to_csv(args.output, sep=';', index=False)
+                else:
+                    df.to_pickle(args.output, protocol=4)
+            except FileNotFoundError:
+                logging.debug(args.output)
+                if args.output.endswith(".csv"):
+                    result.to_csv(args.output, sep=';', index=False)
+                else:
+                    result.to_pickle(args.output, protocol=4)
+        else:
+            logging.error(f"Failed to parse the output.")
 
         # Dump stdout and stderr
         logging.info("Standard output:")

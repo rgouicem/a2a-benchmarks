@@ -55,6 +55,8 @@ class Phoenix(Benchmark):
                                  'unit': 'seconds',
                                  'retval': retval,
                                  'value': duration }, ignore_index=True)
+        if len(df) == 0:
+            return None
         return df
 
     def cleanup(self):
