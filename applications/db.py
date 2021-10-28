@@ -21,7 +21,7 @@ class SQLite(Benchmark):
 
         # Get binary ISA
         if args.arch not in archs:
-            logging.error("Architecture not supported by PARSEC. Should be among "+archs)
+            logging.error("Architecture not supported by Sqlite. Should be among "+archs)
             exit(1)
         self.arch = args.arch
 
