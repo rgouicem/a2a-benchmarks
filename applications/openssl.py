@@ -105,11 +105,27 @@ class SHA1(Openssl):
         return format_output_throughput(self, stdout, stderr)
 
 
+class SHA256(Openssl):
+
+    def __init__(self, args, config):
+        super().__init__(args, config)
+
+
+    def prepare(self):
+        super().prepare()
+        self.cmdline.append("sha256")
+
+
+    def format_output(self, stdout, stderr):
+        return format_output_throughput(self, stdout, stderr)
+
+
 class OpensslFactory():
 
     apps = {
         "openssl.md5": MD5,
         "openssl.sha1": SHA1,
+        "openssl.sha256": SHA256,
     }
     
     def create(args, config):
