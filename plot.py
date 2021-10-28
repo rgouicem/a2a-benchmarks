@@ -40,8 +40,7 @@ else:
 
 # Parse baseline arg
 try:
-    b = args.baseline.split(',')
-    base_arch, base_runtime, base_tag = b
+    base_arch, base_runtime, base_tag = args.baseline.split(',')
 except ValueError:
     logging.error('Wrong format for baseline argument. Expecting arch,runtime,tag.')
     exit(1)
@@ -53,6 +52,23 @@ base_df = df.loc[(df['arch'] == base_arch) & (df['runtime'] == base_runtime) & (
 base_means = {}
 for b in set(base_df['bench']):
     base_means[b] = np.array(base_df.loc[base_df['bench'] == b]['value'].values, dtype=np.float32).mean()
+    # print(f"{b};{base_means[b]:.2f}")
+
+# Print the mean of every benchmark for each runtime
+mean_df = pd.DataFrame(columns=['bench',
+                                # 'none',
+                                'master',
+                                'no-fences',
+                                # 'new-mappings'
+                                ])
+for b in sorted(set(df['bench'])):
+    df_b = df.loc[df['bench'] == b]
+    tmp_dict = { 'bench': b }
+    for t in set(df_b['tag']):
+        df_b_t = df_b.loc[df_b['tag'] == t]
+        tmp_dict[t] = np.mean(df_b_t['value'])
+    mean_df = mean_df.append(tmp_dict, ignore_index=True)
+print(mean_df)
 
 # Normalize all results from original df to these means
 df_norm = pd.DataFrame(columns=['arch', 'bench', 'dataset', 'threads', 'unit', 'value', 'runtime',
@@ -60,10 +76,16 @@ df_norm = pd.DataFrame(columns=['arch', 'bench', 'dataset', 'threads', 'unit', '
 norm_vals = []
 for row in df.itertuples():
     try:
-        norm = float(row.value) / base_means[row.bench]
+        if row.arch == base_arch and row.runtime == base_runtime and row.tag == base_tag:
+            continue
+        # norm = base_means[row.bench] / float(row.value)      # speedup
+        norm = float(row.value) / base_means[row.bench]    # relative perf
+        
+        # norm = 100 * (base_means[row.bench] - float(row.value)) / base_means[row.bench]
         dct = row._asdict()
         dct['norm'] = norm
-        dct['label'] = f"{dct['runtime']}-{dct['tag']}"
+        dct['label'] = f"{dct['tag']}"
+        # dct['label'] = f"{dct['runtime']}-{dct['tag']}"
         del dct['Index']
         del dct['cmdline']
         norm_vals.append(dct)
@@ -72,13 +94,44 @@ for row in df.itertuples():
 df_norm = df_norm.append(norm_vals, ignore_index=True)
 
 # Plot
-ax = sbs.barplot(data=df_norm, x='bench', y='norm', hue='label',
+fig = plt.figure(figsize=(10, 3))
+palette = sbs.color_palette("muted")
+# palette ={"native-none": "C0", "qemu-master": "C4", "qemu-no-fences": "C1", "qemu-new-mappings": "C2"}
+# df_norm = df_norm.loc[df_norm['label'] != 'qemu-master']
+ax = sbs.barplot(data=df_norm, ci='sd',
+                 x='bench', y='norm',
+                 # x='norm', y='bench',
+                 hue='label', palette=palette,
                  order=sorted(set(df_norm['bench'])))
+
 plt.grid(b=True, axis='y')
-plt.yticks(ticks=np.arange(0, max(df_norm['norm'].values) + 0.1, step=0.1))
-plt.legend(bbox_to_anchor=(1.01, 1),borderaxespad=0)
+# plt.grid(b=True, axis='x')
+
+plt.xticks(# ticks=list(range(0, len(set(base_df['bench'])))),
+           # labels=
+           rotation=45, ha="right", fontsize='x-small')
+
+# plt.ylim(0, 1.1)
+# plt.ylim(0, 22)
+
+# plt.yticks(ticks=np.arange(0, 25, step=5))
+# plt.yticks(ticks=np.arange(0, 1.1, step=.1))
+
+plt.legend(loc='upper center', bbox_to_anchor=(0.5, 1.15),borderaxespad=0, ncol=4)
+# ax.get_legend().remove()
+
 ax.set_axisbelow(True)
+
 plt.xlabel("")
-plt.ylabel("Normalized performance")
+# plt.xlabel("Speedup compared to vanilla QEMU")
+
+# plt.ylabel("Speedup w.r.t. QEMU")
+plt.ylabel("Runtime relative to qemu-master")
+
+plt.axhline(y=1, xmin=0, xmax=1, color='red')
+# Annotate the raw value of the baseline
+for idx, value in enumerate(sorted(set(base_means))):
+    plt.text(idx - .2, 1.02, f"{base_means[value]:.1f}", fontsize='xx-small')
+
 plt.savefig(args.output, dpi=500, bbox_inches='tight')
-plt.show()
+# plt.show()
