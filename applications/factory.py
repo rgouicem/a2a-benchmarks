@@ -3,6 +3,7 @@
 from applications.parsec import ParsecFactory
 from applications.phoenix import PhoenixFactory
 from applications.db import DbFactory
+from applications.openssl import OpensslFactory
 
 class BenchmarkFactory():
 
@@ -13,4 +14,6 @@ class BenchmarkFactory():
             return PhoenixFactory.create(args, config)
         if args.bench.startswith('db.'):
             return DbFactory.create(args, config)
+        if args.bench.startswith("openssl."):
+            return OpensslFactory.create(args, config)
         return None
