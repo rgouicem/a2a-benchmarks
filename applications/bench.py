@@ -9,7 +9,7 @@ class Benchmark():
 
     def __init__(self, args, config):
         self.name = args.bench
-        self.threads = args.num_threads
+        self.threads = int(args.num_threads)
 
     def prepare(self):
         pass
