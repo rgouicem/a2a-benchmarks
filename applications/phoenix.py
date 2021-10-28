@@ -43,7 +43,7 @@ class Phoenix(Benchmark):
     def format_output(self, stdout, stderr):
         df = pd.DataFrame()
         stdout.seek(0)
-        for l in fp:
+        for l in stdout:
             if "bench.py" in l:
                 duration = float(l.split(' ')[2])
                 retval = int(l.split(' ')[7])
