@@ -32,19 +32,22 @@ class SQLite(Benchmark):
 
     def format_output(self, stdout, stderr):
         df = pd.DataFrame()
-        with open(stdout.name, "r") as fp:
-            for l in fp:
-                if "bench.py" in l:
-                    duration = float(l.split(' ')[2])
-                    retval = int(l.split(' ')[7])
-                    df = df.append({ 'bench': self.app,
-                                     'dataset': 'none',
-                                     'arch': self.arch,
-                                     'threads': int(self.threads),
-                                     'cmdline': ' '.join(self.cmdline),
-                                     'unit': 'seconds',
-                                     'retval': retval,
-                                     'value': duration }, ignore_index=True)
+        stdout.seek(0)
+        for l in stdout:
+            if "bench.py" in l:
+                duration = float(l.split(' ')[2])
+                retval = int(l.split(' ')[7])
+                df = df.append({ 'bench': self.app,
+                                 'dataset': 'none',
+                                 'arch': self.arch,
+                                 'threads': int(self.threads),
+                                 'cmdline': ' '.join(self.cmdline),
+                                 'unit': 'seconds',
+                                 'retval': retval,
+                                 'value': duration }, ignore_index=True)
+
+        if len(df) == 0:
+            return None
         return df
 
     def cleanup(self):
