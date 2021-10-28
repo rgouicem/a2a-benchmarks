@@ -113,6 +113,7 @@ for i in range(1, args.num_runs + 1):
                     result.to_csv(args.output, sep=';', index=False)
                 else:
                     result.to_pickle(args.output, protocol=4)
+            logging.info("Formatting output...done")
         else:
             logging.error(f"Failed to parse the output.")
 
