@@ -5,6 +5,7 @@ import pandas as pd
 
 from applications.bench import Benchmark
 
+datasets = [ 'small', 'med', 'large' ]
 archs = {
     "x86_64": "amd64-linux.gcc",
     "aarch64": "aarch64-linux.gcc"
@@ -21,6 +22,16 @@ class Phoenix(Benchmark):
         super().__init__(args, config)
         self.app = args.bench
         self.phoenix_dir = config.store["PHOENIX_DIR"]
+
+        # Check dataset
+        if args.dataset is None:
+            logging.warning("No dataset specified. Falling back to 'test'.")
+            args.dataset = "small"
+        if args.dataset not in datasets:
+            logging.error("Dataset not supported by Phoenix. Should be among "+str(datasets))
+            exit(1)
+        else:
+            self.dataset = args.dataset
 
          # Get binary ISA
         if args.arch not in archs:

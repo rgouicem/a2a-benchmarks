@@ -26,6 +26,9 @@ class Parsec(Benchmark):
         self.parsec_dir = config.store["PARSEC_DIR"]
 
         # Check dataset
+        if args.dataset is None:
+            logging.warning("No dataset specified. Falling back to 'test'.")
+            args.dataset = "test"
         if args.dataset not in datasets:
             logging.error("Dataset not supported by PARSEC. Should be among "+str(datasets))
             exit(1)

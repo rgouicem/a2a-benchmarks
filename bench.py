@@ -14,7 +14,7 @@ from runtimes.factory import RuntimeFactory
 parser = argparse.ArgumentParser(description="Benchmark facility")
 parser.add_argument('-b', '--bench', required=True,
                     help='Benchmark to run')
-parser.add_argument('-d', '--dataset', required=True,
+parser.add_argument('-d', '--dataset', required=False,
                     help='Dataset to use, benchmark specific. Use \'help\' to see a list for the requested benchmark.')
 parser.add_argument('-r', '--runtime', required=True, choices=['native','qemu','llvm'],
                     help='Type of runtime')
