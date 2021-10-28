@@ -53,19 +53,19 @@ class Parsec(Benchmark):
 
     def format_output(self, stdout, stderr):
         df = pd.DataFrame()
-        with open(stdout.name, "r") as fp:
-            for l in fp:
-                if "bench.py" in l:
-                    duration = float(l.split(' ')[2])
-                    retval = int(l.split(' ')[7])
-                    df = df.append({ 'bench': f"parsec.{self.app}",
-                                     'dataset': self.dataset,
-                                     'arch': self.arch,
-                                     'threads': int(self.threads),
-                                     'cmdline': ' '.join(self.cmdline),
-                                     'unit': 'seconds',
-                                     'retval': retval,
-                                     'value': duration }, ignore_index=True)
+        stdout.seek(0)
+        for l in stdout:
+            if "bench.py" in l:
+                duration = float(l.split(' ')[2])
+                retval = int(l.split(' ')[7])
+                df = df.append({ 'bench': f"parsec.{self.app}",
+                                 'dataset': self.dataset,
+                                 'arch': self.arch,
+                                 'threads': int(self.threads),
+                                 'cmdline': ' '.join(self.cmdline),
+                                 'unit': 'seconds',
+                                 'retval': retval,
+                                 'value': duration }, ignore_index=True)
         return df
 
 

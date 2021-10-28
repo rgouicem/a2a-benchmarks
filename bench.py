@@ -76,46 +76,57 @@ logging.info(f"Command line: {cmdline}")
 
 # Execute the command line
 logging.info(f"Executing command {args.num_runs} times...")
-stdout = tempfile.NamedTemporaryFile(mode="w")
-stderr = tempfile.NamedTemporaryFile(mode="w")
 for i in range(1, args.num_runs + 1):
-    logging.info(f"Run {i}...")
-    start = time.time()
-    retproc = subprocess.run(cmdline, env=env, stdout=stdout, stderr=stderr)
-    end = time.time()
-    print(f"bench.py: duration: {end - start} seconds, run: {i}, retval: {retproc.returncode}", file=stdout, flush=True)
-    logging.info(f"Run {i}... done (retval={retproc.returncode})")
+    # Get tmpfile for stdout and stderr
+    with tempfile.TemporaryFile(mode="w+") as stdout, tempfile.TemporaryFile(mode="w+") as stderr:
+        # Execute a run of the benchmark
+        logging.info(f"Run {i}...")
+        start = time.time()
+        retproc = subprocess.run(cmdline, env=env, stdout=stdout, stderr=stderr)
+        end = time.time()
+
+        print(f"bench.py: duration: {end - start} seconds, run: {i}, retval: {retproc.returncode}",
+              file=stdout, flush=True)
+        logging.info(f"Run {i}... done (retval={retproc.returncode})")
+
+        # Format the output and save to disk
+        logging.info("Formatting output...")
+        result = bench.format_output(stdout, stderr)
+        result['runtime'] = args.runtime
+        result['tag'] = args.tag
+
+        try:
+            if args.output.endswith(".csv"):
+                df = pd.read_csv(args.output, sep=';')
+            else:
+                df = pd.read_pickle(args.output)
+            df = df.append(result, ignore_index=False)
+            df = df.reset_index(drop=True)
+            if args.output.endswith(".csv"):
+                df.to_csv(args.output, sep=';', index=False)
+            else:
+                df.to_pickle(args.output, protocol=4)
+        except FileNotFoundError:
+            logging.debug(args.output)
+            if args.output.endswith(".csv"):
+                result.to_csv(args.output, sep=';', index=False)
+            else:
+                result.to_pickle(args.output, protocol=4)
+
+        # Dump stdout and stderr
+        logging.info("Standard output:")
+        if stdout.tell() != 0:
+            stdout.seek(0)
+            print(stdout.read())
+        logging.info("Standard output end.")
+        logging.info("Standard error:")
+        if stderr.tell() != 0:
+            stderr.seek(0)
+            print(stderr.read())
+        logging.info("Standard error end.")
+
 logging.info(f"Executing command {args.num_runs} times... done")
-
-# Format the output and save to disk
-logging.info("Formatting output...")
-result = bench.format_output(stdout, stderr)
-result['runtime'] = args.runtime
-result['tag'] = args.tag
-try:
-    if args.output.endswith(".csv"):
-        df = pd.read_csv(args.output, sep=';')
-    else:
-        df = pd.read_pickle(args.output)
-    df = df.append(result, ignore_index=False)
-    df = df.reset_index(drop=True)
-    if args.output.endswith(".csv"):
-        df.to_csv(args.output, sep=';', index=False)
-    else:
-        df.to_pickle(args.output, protocol=4)
-except FileNotFoundError:
-    if args.output.endswith(".csv"):
-        result.to_csv(args.output, sep=';', index=False)
-    else:
-        result.to_pickle(args.output, protocol=4)
 logging.info(f"Results available at: {args.output}")
-
-logging.info('Standard output:')
-with open(stdout.name, "r") as fp:
-    logging.info(fp.read())
-logging.info('Standard error:')
-with open(stderr.name, "r") as fp:
-    logging.info(fp.read())
 
 # Cleanup
 logging.info("Cleaning up benchmark data...")
