@@ -120,12 +120,53 @@ class SHA256(Openssl):
         return format_output_throughput(self, stdout, stderr)
 
 
+class RSA(Openssl):
+
+    def __init__(self, args, config):
+        super().__init__(args, config)
+
+
+    def prepare(self):
+        super().prepare()
+        self.cmdline.append("rsa")
+
+
+    def format_output(self, stdout, stderr):
+        df = pd.DataFrame()
+        stdout.seek(0)
+        for l in stdout:
+            if l.startswith("+F2:"):
+                arr = l.strip().split(':')
+                df = df.append({ 'bench': f"{self.name}{arr[2]}-sign",
+                                 'dataset': 'none',
+                                 'arch': self.arch,
+                                 'threads': 1,
+                                 'cmdline': ' '.join(self.cmdline),
+                                 'unit': 'sign/s',
+                                 'value': float(arr[3]) }, ignore_index=True)
+                df = df.append({ 'bench': f"{self.name}{arr[2]}-verify",
+                                 'dataset': 'none',
+                                 'arch': self.arch,
+                                 'threads': 1,
+                                 'cmdline': ' '.join(self.cmdline),
+                                 'unit': 'verify/s',
+                                 'value': float(arr[4]) }, ignore_index=True)
+            elif "bench.py" in l:
+                retval = int(l.split(' ')[7])
+
+        df['retval'] = retval
+        if len(df) == 0:
+            return None
+        return df
+
+
 class OpensslFactory():
 
     apps = {
         "openssl.md5": MD5,
         "openssl.sha1": SHA1,
         "openssl.sha256": SHA256,
+        "openssl.rsa": RSA,
     }
     
     def create(args, config):
