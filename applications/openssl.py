@@ -50,6 +50,30 @@ class Openssl(Benchmark):
         ret += ">"
         return ret
 
+def format_output_throughput(self, stdout, stderr):
+    df = pd.DataFrame()
+    stdout.seek(0)
+    for l in stdout:
+        if l.startswith("+H:"):
+            blksize_list = l.split(':')[1:]
+        elif l.startswith("+F:"):
+            throughput_list = l.split(':')[3:]
+        elif "bench.py" in l:
+            retval = int(l.split(' ')[7])
+    if len(blksize_list) != len(throughput_list):
+        logging.error(f"Inconsistent output ({len(blksize_list)} block sizes and {len(throughput_list)} throughput values)")
+        return None
+    else:
+        for i, b in enumerate(blksize_list):
+            df = df.append({ 'bench': f"{self.name}-{b.strip()}",
+                             'dataset': 'none',
+                             'arch': self.arch,
+                             'threads': 1,
+                             'cmdline': ' '.join(self.cmdline),
+                             'unit': 'B/s',
+                             'retval': retval,
+                             'value': float(throughput_list[i]) }, ignore_index=True)
+    return df
 
 class MD5(Openssl):
 
@@ -63,35 +87,29 @@ class MD5(Openssl):
 
 
     def format_output(self, stdout, stderr):
-        df = pd.DataFrame()
-        stdout.seek(0)
-        for l in stdout:
-            if l.startswith("+H:"):
-                blksize_list = l.split(':')[1:]
-            elif l.startswith("+F:"):
-                throughput_list = l.split(':')[3:]
-            elif "bench.py" in l:
-                retval = int(l.split(' ')[7])
-        if len(blksize_list) != len(throughput_list):
-            logging.error(f"Inconsistent output ({len(blksize_list)} block sizes and {len(throughput_list)} throughput values)")
-            return None
-        else:
-            for i, b in enumerate(blksize_list):
-                df = df.append({ 'bench': f"{self.name}-{b.strip()}",
-                                 'dataset': 'none',
-                                 'arch': self.arch,
-                                 'threads': 1,
-                                 'cmdline': ' '.join(self.cmdline),
-                                 'unit': 'B/s',
-                                 'retval': retval,
-                                 'value': float(throughput_list[i]) }, ignore_index=True)
-        return df
-    
+        return format_output_throughput(self, stdout, stderr)
+
+
+class SHA1(Openssl):
+
+    def __init__(self, args, config):
+        super().__init__(args, config)
+
+
+    def prepare(self):
+        super().prepare()
+        self.cmdline.append("sha1")
+
+
+    def format_output(self, stdout, stderr):
+        return format_output_throughput(self, stdout, stderr)
+
 
 class OpensslFactory():
 
     apps = {
         "openssl.md5": MD5,
+        "openssl.sha1": SHA1,
     }
     
     def create(args, config):
