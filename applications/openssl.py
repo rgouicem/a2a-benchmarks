@@ -60,19 +60,22 @@ def format_output_throughput(self, stdout, stderr):
             throughput_list = l.split(':')[3:]
         elif "bench.py" in l:
             retval = int(l.split(' ')[7])
-    if len(blksize_list) != len(throughput_list):
-        logging.error(f"Inconsistent output ({len(blksize_list)} block sizes and {len(throughput_list)} throughput values)")
+    try:
+        if len(blksize_list) != len(throughput_list):
+            logging.error(f"Inconsistent output ({len(blksize_list)} block sizes and {len(throughput_list)} throughput values)")
+            return None
+        else:
+            for i, b in enumerate(blksize_list):
+                df = df.append({ 'bench': f"{self.name}-{b.strip()}",
+                                 'dataset': 'none',
+                                 'arch': self.arch,
+                                 'threads': 1,
+                                 'cmdline': ' '.join(self.cmdline),
+                                 'unit': 'B/s',
+                                 'retval': retval,
+                                 'value': float(throughput_list[i]) }, ignore_index=True)
+    except:
         return None
-    else:
-        for i, b in enumerate(blksize_list):
-            df = df.append({ 'bench': f"{self.name}-{b.strip()}",
-                             'dataset': 'none',
-                             'arch': self.arch,
-                             'threads': 1,
-                             'cmdline': ' '.join(self.cmdline),
-                             'unit': 'B/s',
-                             'retval': retval,
-                             'value': float(throughput_list[i]) }, ignore_index=True)
     return df
 
 class MD5(Openssl):
