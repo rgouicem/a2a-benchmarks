@@ -4,6 +4,7 @@ from applications.parsec import ParsecFactory
 from applications.phoenix import PhoenixFactory
 from applications.db import DbFactory
 from applications.openssl import OpensslFactory
+from applications.microbench import MicrobenchFactory
 
 class BenchmarkFactory():
 
@@ -16,4 +17,6 @@ class BenchmarkFactory():
             return DbFactory.create(args, config)
         if args.bench.startswith("openssl."):
             return OpensslFactory.create(args, config)
+        if args.bench.startswith("micro."):
+            return MicrobenchFactory.create(args, config)
         return None
