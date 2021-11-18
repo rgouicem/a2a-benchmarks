@@ -20,7 +20,7 @@ class Math(Benchmark):
 
         # Get binary ISA
         if args.arch not in archs:
-            logging.error("Architecture not supported by Openssl. Should be among "+str(archs))
+            logging.error("Architecture not supported by micro.math. Should be among "+str(archs))
             exit(1)
         self.arch = args.arch
 
@@ -44,7 +44,7 @@ class Math(Benchmark):
                                  'arch': self.arch,
                                  'threads': 1,
                                  'cmdline': ' '.join(self.cmdline),
-                                 'unit': 'ops/s',
+                                 'unit': 'ops/ms',
                                  'value': float(value) }, ignore_index=True)
 
         df['retval'] = retval
