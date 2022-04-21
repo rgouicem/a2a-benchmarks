@@ -18,6 +18,8 @@ parser.add_argument('-d', '--dataset', required=False,
                     help='Dataset to use, benchmark specific. Use \'help\' to see a list for the requested benchmark.')
 parser.add_argument('-r', '--runtime', required=True, choices=['native','qemu','llvm'],
                     help='Type of runtime')
+parser.add_argument('--run-opt', required=False,
+                    help='Command line arguments passed to the runtime system selected')
 parser.add_argument('-o', '--output', required=True,
                     help='Pickle/csv file where results should be outputed. If file already exists, results will be appended.')
 parser.add_argument('-a', '--arch', default='x86_64', choices=['x86_64', 'aarch64'],

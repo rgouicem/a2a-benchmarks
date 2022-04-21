@@ -23,7 +23,7 @@ class Qemu(Runtime):
         self.arch = args.arch
 
         # Build command line
-        self.cmdline = [ f"{self.path}/qemu-{self.arch}" ]
+        self.cmdline = [ f"{self.path}/qemu-{self.arch}" ] + self.opts.split(' ')
 
     def __str__(self):
         return super().__str__()
