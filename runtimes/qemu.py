@@ -24,7 +24,7 @@ class Qemu(Runtime):
 
         # Build command line
         self.cmdline = [ f"{self.path}/qemu-{self.arch}" ]
-        if self.opts is not "":
+        if self.opts != "":
             self.cmdline += self.opts.split(' ')
 
     def __str__(self):
