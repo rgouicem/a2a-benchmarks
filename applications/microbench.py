@@ -169,7 +169,7 @@ class Cas(Benchmark):
         try:
             self.cmdline = [ self.binary_path ] + self.configs[self.dataset]
         except KeyError:
-            logging.error(f"Dataset not supported. Should be among {configs}")
+            logging.error(f"Dataset not supported. Should be among {self.configs}")
             exit(1)
 
 
